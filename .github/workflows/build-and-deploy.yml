@@ -14,7 +14,8 @@ jobs:
         cache: yarn
     - name: Install Dependencies
       run: |
-        npm install && npm install flow-bin
+        npm install --save-dev @typescript-eslint/eslint-plugin
+        npm install flow-bin
     - run: yarn typecheck
     - run: yarn typecheck-ts
     - run: yarn lint
