@@ -60,13 +60,6 @@ jobs:
     - name: Run Jest tests
       run: yarn jest --ci --maxWorkers 4 --reporters=default --reporters=jest-junit
   publish-to-npm:
-    if: |
-      startsWith(github.ref, 'refs/tags/v') && (
-        contains(github.ref, '-alpha') ||
-        contains(github.ref, '-beta') ||
-        contains(github.ref, '-rc') ||
-        (endsWith(github.ref, '.0') && contains(github.ref, '-'))
-      )
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4.1.0
@@ -74,7 +67,17 @@ jobs:
       with:
         node-version: 18.12
         cache: yarn
+    - name: Check Tag Format
+      id: check_tag
+      run: |
+        if [[ $GITHUB_REF =~ ^refs/tags/v\d+(\.\d+){2}(-.*)?$ ]]; then
+          echo "::set-output name=valid::true"
+        else
+          echo "::set-output name=valid::false"
+        fi
+      shell: bash
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
     - name: Infer dist-tag and run npm run publish
+      if: steps.check_tag.outputs.valid == 'true'
       run: "./.circleci/scripts/publish.sh"
     - run: rm ~/.npmrc
