@@ -13,8 +13,7 @@ jobs:
         node-version: 18.12
         cache: yarn
     - name: Install Dependencies
-      run: |
-        npm install --force flow-bin
+      run: npm install --force flow-bin
     - run: yarn typecheck
     - run: yarn typecheck-ts
     - run: yarn lint
@@ -27,6 +26,8 @@ jobs:
       with:
         node-version: 18.12
         cache: yarn
+    - name: Install Dependencies
+      run: npm install @babel/core
     - run: yarn test-coverage
     - name: Download Codecov Uploader
       run: "./.circleci/scripts/install_codecov.sh"
