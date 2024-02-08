@@ -1,0 +1,66 @@
+name: facebook/metro/build-and-deploy
+on:
+  push:
+    branches:
+    - main
+jobs:
+  run-js-checks:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18.12
+        cache: yarn
+    - run: yarn typecheck
+    - run: yarn typecheck-ts
+    - run: yarn lint
+    - run: yarn test-smoke
+  test-with-coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18.12
+        cache: yarn
+    - run: yarn test-coverage
+    - name: Download Codecov Uploader
+      run: "./.circleci/scripts/install_codecov.sh"
+    - name: Upload coverage results
+      run: "./codecov -t ${{ secrets.CODECOV_TOKEN }} -f ./coverage/coverage-final.json"
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 18.12, 20.2 ]
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+    - uses: "./.github/actions/install_and_run_tests"
+  test-windows:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18.12
+        cache: yarn
+    #- name: Install Yarn
+    #  run: |
+    #    choco install -y yarn
+    - uses: "./.github/actions/install_and_run_tests"
+  publish-to-npm:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18.12
+        cache: yarn
+    - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+    - name: Infer dist-tag and run npm run publish
+      run: "./.circleci/scripts/publish.sh"
+    - run: rm ~/.npmrc
