@@ -43,7 +43,10 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-    - uses: "./.github/actions/install_and_run_tests"
+    - name: Install Dependencies
+      run: npm install --force --save-dev jest
+    - name: Run Jest tests
+      run: yarn jest --ci --maxWorkers 4 --reporters=default --reporters=jest-junit
   test-windows:
     runs-on: ubuntu-latest
     steps:
