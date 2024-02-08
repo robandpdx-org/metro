@@ -12,6 +12,9 @@ jobs:
       with:
         node-version: 18.12
         cache: yarn
+    - name: Install Dependencies
+      run: |
+        npm install flow-bin
     - run: yarn typecheck
     - run: yarn typecheck-ts
     - run: yarn lint
