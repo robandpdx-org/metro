@@ -48,14 +48,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4.1.0
+    - uses: actions/upload-artifact@v4.0.0
+      with:
+        path: "./reports/"
     - uses: actions/setup-node@v4
       with:
         node-version: 18.12
         cache: yarn
+    - run: yarn jest --ci --maxWorkers 4 --reporters=default --reporters=jest-junit
     #- name: Install Yarn
     #  run: |
     #    choco install -y yarn
-    - uses: "./.github/actions/install_and_run_tests"
+    #- uses: "./.github/actions/install_and_run_tests"
   publish-to-npm:
     runs-on: ubuntu-latest
     steps:
