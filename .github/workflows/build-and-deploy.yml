@@ -56,7 +56,7 @@ jobs:
         node-version: 18.12
         cache: yarn
     - name: Install Dependencies
-      run: npm install --save-dev jest
+      run: npm install --force --save-dev jest
     - name: Run Jest tests
       run: yarn jest --ci --maxWorkers 4 --reporters=default --reporters=jest-junit
     #- name: Install Yarn
