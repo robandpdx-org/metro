@@ -75,9 +75,9 @@ jobs:
       id: check_tag
       run: |
         if [[ $GITHUB_REF =~ ^refs/tags/v\d+(\.\d+){2}(-.*)?$ ]]; then
-          echo "valid::true" >> $GITHUB_OUTPUT
+          echo "valid=true" >> $GITHUB_OUTPUT
         else
-          echo "valid::false" >> $GITHUB_OUTPUT
+          echo "valid=false" >> $GITHUB_OUTPUT
         fi
       shell: bash
     - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
